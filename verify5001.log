@@ -1,0 +1,22 @@
+Mounting auth routes at /api/auth
+Auth routes mounted successfully
+Mounting exam routes at /api/exams
+Exam routes mounted successfully
+Mounting folder routes at /api/folders
+Folder routes mounted successfully
+Mounting help request routes at /api/help-requests
+Help request routes mounted successfully
+Mounting community routes at /api/community
+Community routes mounted successfully
+Mounting blossom routes at /api/blossom
+Blossom routes mounted successfully
+Mounting chat routes at /api/chat
+Mounting concern routes at /api/concerns
+Mounting feedback routes at /api/feedback
+Mounting notification routes at /api/notifications
+MongoDB connected: ac-qndfrrb-shard-00-00.0vkrq8y.mongodb.net
+Server running on port 5001
+Local: http://localhost:5001
+Network: http://0.0.0.0:5001 (use your computer's IP)
+Emitting newMessage to room: 69f4467167d5cfeeb18935de
+Emitting newMessage to room: 69f4467167d5cfeeb18935de
