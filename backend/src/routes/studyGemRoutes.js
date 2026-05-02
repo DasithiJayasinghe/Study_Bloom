@@ -8,14 +8,15 @@ const {
     deleteStudyGem
 } = require('../controllers/studyGemController');
 const { protect } = require('../middleware/authMiddleware');
+const upload = require('../middleware/uploadMiddleware');
 
 router.route('/')
     .get(protect, getStudyGems)
-    .post(protect, createStudyGem);
+    .post(protect, upload.array('attachments', 5), createStudyGem);
 
 router.route('/:id')
     .get(protect, getStudyGem)
-    .put(protect, updateStudyGem)
+    .put(protect, upload.array('attachments', 5), updateStudyGem)
     .delete(protect, deleteStudyGem);
 
 module.exports = router;
