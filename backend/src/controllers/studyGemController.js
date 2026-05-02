@@ -66,13 +66,36 @@ exports.getStudyGem = async (req, res) => {
 // @access Private
 exports.createStudyGem = async (req, res) => {
     try {
-        const { title, description, notes, folderId, type, tags, attachments, pollData } = req.body;
+        let { title, description, notes, folderId, type, tags, attachments, pollData } = req.body;
 
         if (!title || !folderId) {
             return res.status(400).json({
                 success: false,
                 message: 'Please provide title and folderId'
             });
+        }
+
+        // Parse JSON strings if they come from FormData
+        if (typeof tags === 'string') {
+            try { tags = JSON.parse(tags); } catch (e) { tags = tags.split(',').map(t => t.trim()).filter(t => t); }
+        }
+        if (typeof pollData === 'string') {
+            try { pollData = JSON.parse(pollData); } catch (e) { pollData = []; }
+        }
+        if (typeof attachments === 'string') {
+            try { attachments = JSON.parse(attachments); } catch (e) { attachments = []; }
+        } else if (!attachments) {
+            attachments = [];
+        }
+
+        // Handle uploaded files
+        if (req.files && req.files.length > 0) {
+            const newAttachments = req.files.map(file => ({
+                name: file.originalname,
+                url: `/uploads/${file.filename}`,
+                fileType: file.mimetype
+            }));
+            attachments = [...attachments, ...newAttachments];
         }
 
         const gem = await StudyGem.create({
@@ -125,6 +148,27 @@ exports.updateStudyGem = async (req, res) => {
         if (req.body.folderId) {
             req.body.folder = req.body.folderId;
             delete req.body.folderId;
+        }
+
+        // Handle JSON parsing for multipart updates
+        if (typeof req.body.tags === 'string') {
+            try { req.body.tags = JSON.parse(req.body.tags); } catch (e) { /* ignore */ }
+        }
+        if (typeof req.body.pollData === 'string') {
+            try { req.body.pollData = JSON.parse(req.body.pollData); } catch (e) { /* ignore */ }
+        }
+        if (typeof req.body.attachments === 'string') {
+            try { req.body.attachments = JSON.parse(req.body.attachments); } catch (e) { /* ignore */ }
+        }
+
+        // Handle uploaded files in update
+        if (req.files && req.files.length > 0) {
+            const newAttachments = req.files.map(file => ({
+                name: file.originalname,
+                url: `/uploads/${file.filename}`,
+                fileType: file.mimetype
+            }));
+            req.body.attachments = [...(req.body.attachments || []), ...newAttachments];
         }
 
         gem = await StudyGem.findByIdAndUpdate(req.params.id, req.body, {
